@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<person>
+    <personId>1</personId>
+    <firstName/>
+    <lastName>asd</lastName>
+    <mobile>123</mobile>
+    <email>dsa</email>
+    <pesel/>
+</person>
