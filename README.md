@@ -8,7 +8,7 @@
 
 The system supports full CRUD operations, moving employees between types, and searching by any combination of attributes.
 
----
+----
 
 ## Features
 
@@ -20,7 +20,7 @@ The system supports full CRUD operations, moving employees between types, and se
 - Each employee is stored in a separate XML file
 - Pure Java SE, no `javax.xml.bind.*` or frameworks used
 
----
+----
 
 ## Models
 ### Person
