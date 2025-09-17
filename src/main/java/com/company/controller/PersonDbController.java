@@ -5,12 +5,15 @@ import com.company.model.PersonType;
 import com.company.service.PersonService;
 import com.company.service.PersonServiceImpl;
 
-//EXECUTE CRUD ON XML DB
 public class PersonDbController {
     private final PersonService personService;
 
     public PersonDbController() {
         this.personService = new PersonServiceImpl();
+    }
+
+    public PersonDbController(PersonService personService) {
+        this.personService = personService;
     }
 
     public Person find(String personId,

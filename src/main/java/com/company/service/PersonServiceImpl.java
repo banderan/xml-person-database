@@ -12,6 +12,10 @@ public class PersonServiceImpl implements PersonService {
         this.personRepository = new PersonRepositoryImpl();
     }
 
+    public PersonServiceImpl(String path) {
+        this.personRepository = new PersonRepositoryImpl(path);
+    }
+
     @Override
     public Person findPerson(
             String personId,
@@ -105,21 +109,22 @@ public class PersonServiceImpl implements PersonService {
         if (personId != null && !personId.trim().isEmpty()
                 && firstName != null && !firstName.trim().isEmpty()) {
             personRepository.movePersonByFileName(personId, firstName, typeFrom, typeTo);
+            return;
         }
 
         if (personId != null && !personId.trim().isEmpty()) {
             personRepository.movePersonById(personId, typeFrom, typeTo);
+            return;
         }
 
         personRepository.movePersonByPersonFromFile(
                 firstName, lastName, mobile, email, pesel, typeFrom, typeTo);
+
     }
 
     private static PersonType getDefaultType(PersonType type) {
-        if (type == null) {
-            type = PersonType.INTERNAL;
-        }
-        return type;
+        return (type != null) ? type : PersonType.INTERNAL;
+
     }
 }
 

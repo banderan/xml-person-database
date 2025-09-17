@@ -18,7 +18,7 @@ public interface PersonRepository {
                                 String pesel,
                                 PersonType type);
 
-    void create(String firstName,
+    Person create(String firstName,
                 String lastName,
                 String mobile,
                 String email,
@@ -39,7 +39,7 @@ public interface PersonRepository {
                                    String pesel,
                                    PersonType type);
 
-    void modify(String personId,
+    Person modify(String personId,
                 String firstName,
                 String lastName,
                 String mobile,
@@ -47,16 +47,16 @@ public interface PersonRepository {
                 String pesel,
                 PersonType type);
 
-    void movePersonByFileName(String personId,
+    boolean movePersonByFileName(String personId,
                               String firstName,
                               PersonType typeFrom,
                               PersonType typeTo);
 
-    void movePersonById(String personId,
+    boolean movePersonById(String personId,
                         PersonType typeFrom,
                         PersonType typeTo);
 
-    void movePersonByPersonFromFile(String firstName,
+    boolean movePersonByPersonFromFile(String firstName,
                                     String lastName,
                                     String mobile,
                                     String email,
