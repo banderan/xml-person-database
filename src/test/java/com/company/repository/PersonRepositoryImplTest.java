@@ -10,6 +10,9 @@ import com.company.converter.PersonXmlConverter;
 import com.company.model.Person;
 import com.company.model.PersonType;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +28,12 @@ class PersonRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
+        try {
+            Files.createDirectories(Path.of("src/test/resources/data/internal"));
+            Files.createDirectories(Path.of("src/test/resources/data/external"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         createTestPerson(getFilledPerson(), PersonType.INTERNAL);
         createTestPerson(getNullPerson(), PersonType.EXTERNAL);
     }

@@ -25,6 +25,8 @@ class PersonXmlConverterTest {
     @BeforeAll
     static void setupAll() {
         try {
+            Files.createDirectories(Path.of("src/test/resources/data/internal"));
+            Files.createDirectories(Path.of("src/test/resources/data/external"));
             Files.createDirectories(Path.of(TEST_PATH + "internal"));
             Files.createDirectories(Path.of(TEST_PATH + "external"));
         } catch (IOException e) {
