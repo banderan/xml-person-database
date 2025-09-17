@@ -17,8 +17,8 @@ The system supports full **CRUD** operations, searching by any set of attributes
 - **Modify employee data** → `modifyPerson`
 - **Search for employees** → `findPerson`
 - **Move employees** between `Internal` and `External` directories
-- Każdy pracownik przechowywany w osobnym pliku XML
-- **Pure Java SE** – bez `javax.xml.bind.*` i bez frameworków
+- Each employee stored in a separate XML file
+- **Pure Java SE** – without `javax.xml.bind.*` and without frameworks
 
 ---
 
