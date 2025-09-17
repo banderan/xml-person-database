@@ -6,17 +6,21 @@ import com.company.model.PersonType;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class PersonRepositoryImpl implements PersonRepository {
-    private static final String PATH = "src" + File.separator + "main"
-            + File.separator + "resources"
-            + File.separator + "data"
-            + File.separator;
     private static final String DOT = ".";
+    private final String path;
     private final PersonXmlConverter converter;
 
     public PersonRepositoryImpl() {
+        this("src" + File.separator + "main"
+                + File.separator + "resources"
+                + File.separator + "data"
+                + File.separator);
+    }
+
+    public PersonRepositoryImpl(String path) {
+        this.path = path;
         this.converter = new PersonXmlConverter();
     }
 
@@ -82,7 +86,7 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public void create(
+    public Person create(
             String firstName,
             String lastName,
             String mobile,
@@ -94,7 +98,7 @@ public class PersonRepositoryImpl implements PersonRepository {
         }
 
         int maxId = getMaxId(type);
-        createWorker(String.valueOf(maxId), firstName, lastName, mobile, email, pesel, type);
+        return createWorker(String.valueOf(maxId), firstName, lastName, mobile, email, pesel, type);
     }
 
     @Override
@@ -151,7 +155,7 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public void modify(
+    public Person modify(
             String personId,
             String firstName,
             String lastName,
@@ -164,7 +168,7 @@ public class PersonRepositoryImpl implements PersonRepository {
         boolean isRemovedFile = false;
 
         //modify by id
-        if (personId == null || !personId.trim().isEmpty()) {
+        if (personId != null && !personId.trim().isEmpty()) {
             for (String xmlFile : xmlFilesList) {
                 String fileId = xmlFile.substring(0, xmlFile.indexOf(DOT));
 
@@ -178,14 +182,16 @@ public class PersonRepositoryImpl implements PersonRepository {
             try {
                 String fileName = getFileName(personId, firstName, type);
                 converter.toXml(person, getFullPath(type, fileName));
+                return person;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+        return null;
     }
 
     @Override
-    public void movePersonByFileName(
+    public boolean movePersonByFileName(
             String personId,
             String firstName,
             PersonType typeFrom,
@@ -204,16 +210,17 @@ public class PersonRepositoryImpl implements PersonRepository {
 
                 fullPath = getFullPath(typeTo, xmlFileWithUpdatedId);
                 converter.toXml(person, fullPath);
+                return true;
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-
+        return false;
     }
 
     @Override
-    public void movePersonById(String personId, PersonType typeFrom, PersonType typeTo) {
+    public boolean movePersonById(String personId, PersonType typeFrom, PersonType typeTo) {
         List<String> xmlFilesList = listXml(typeFrom);
 
         //movePerson by id
@@ -230,17 +237,18 @@ public class PersonRepositoryImpl implements PersonRepository {
 
                         String fullPath = getFullPath(typeTo, xmlFileWithUpdatedId);
                         converter.toXml(person, fullPath);
+                        return true;
                     }
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-
+        return false;
     }
 
     @Override
-    public void movePersonByPersonFromFile(
+    public boolean movePersonByPersonFromFile(
             String firstName,
             String lastName,
             String mobile,
@@ -263,11 +271,13 @@ public class PersonRepositoryImpl implements PersonRepository {
 
                     fullPath = getFullPath(typeTo, xmlFileWithUpdatedId);
                     converter.toXml(person, fullPath);
+                    return true;
                 }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 
     private int getMaxId(PersonType type) {
@@ -276,7 +286,7 @@ public class PersonRepositoryImpl implements PersonRepository {
                 .map(f -> {
                     try {
                         return converter.fromXml(
-                                PATH + type.toString().toLowerCase() + File.separator + f);
+                                path + type.toString().toLowerCase() + File.separator + f);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -292,7 +302,7 @@ public class PersonRepositoryImpl implements PersonRepository {
         return maxId;
     }
 
-    private void createWorker(
+    private Person createWorker(
             String personId,
             String firstName,
             String lastName,
@@ -311,7 +321,8 @@ public class PersonRepositoryImpl implements PersonRepository {
             String fileName = getFileName(personId, firstName, type);
 
             converter.toXml(person,
-                    PATH + type.toString().toLowerCase() + File.separator + fileName);
+                    path + type.toString().toLowerCase() + File.separator + fileName);
+            return person;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -337,9 +348,13 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     private List<String> listXml(PersonType type) {
 
-        File file = new File(PATH + type.toString().toLowerCase());
+        File file = new File(path + type.toString().toLowerCase());
 
-        return Arrays.stream(Objects.requireNonNull(file.listFiles()))
+        if (!file.exists() || file.listFiles() == null) {
+            return List.of();
+        }
+
+        return Arrays.stream(file.listFiles())
                 .filter(File::isFile)
                 .map(File::getName)
                 .toList();
@@ -371,8 +386,8 @@ public class PersonRepositoryImpl implements PersonRepository {
         return personId + DOT + firstName + DOT + type.toString().toLowerCase() + ".xml";
     }
 
-    private static String getFullPath(PersonType type, String fileName) {
-        return PATH + type.toString().toLowerCase() + File.separator + fileName;
+    private String getFullPath(PersonType type, String fileName) {
+        return path + type.toString().toLowerCase() + File.separator + fileName;
     }
 
     private String prepareNewFile(PersonType typeTo, Person person, String fileName) {
